@@ -1,8 +1,11 @@
 import numpy as np
+import matplotlib.pyplot as plt
+
 
 # sigmoid function
 def sigmoid(z):
     return 1 / (1 + np.exp(-z))
+
 
 # dataset
 X = np.array(
@@ -59,8 +62,41 @@ for epoch in range(epochs):
     predictions = (probabilities > 0.5).astype(int)
     accuracy = np.mean(predictions == y.astype(int))
 
-    print(f"Epoch {epoch}: weights={weights}, bias={bias:.6f}, acc={accuracy:.2f}")
+    # calculate loss
+    loss = -np.mean(
+        y * np.log(probabilities + 1e-9) + (1 - y) * np.log(1 - probabilities + 1e-9)
+    )
+
+    print(f"Epoch {epoch}: weights={weights}, bias={bias:.6f}, acc={accuracy:.2f}, loss={loss:.2f}")
     print("predictions:", predictions)
 
 print("\nFinal values:")
 print("weights:", weights, "bias:", bias)
+
+
+# scatter plot of the original data
+plt.scatter(X[:, 0], X[:, 1], c=y)
+
+# x values for the line
+x1_values = np.linspace(X[:, 0].min(), X[:, 0].max(), 100)
+
+# convert x1 to normalized scale
+x1_norm = (x1_values - mu[0]) / sigma[0]
+
+# decision boundary in normalized space:
+# weights[0] * x1_norm + weights[1] * x2_norm + bias = 0
+x2_norm = -(weights[0] * x1_norm + bias) / weights[1]
+
+# convert x2 back to original scale
+x2_values = x2_norm * sigma[1] + mu[1]
+
+# plot the line
+plt.plot(x1_values, x2_values)
+
+# labels
+plt.xlabel("Feature 1")
+plt.ylabel("Feature 2")
+plt.title("Decision Boundary")
+
+# show graph
+plt.show()
