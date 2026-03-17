@@ -1,10 +1,40 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from data_cleaner_excel import load_data
 
+# Graph Function
+def plot_decision_boundary(X, y, weights, bias, mu, sigma):
+    # scatter plot
+    plt.scatter(X[:, 0], X[:, 1], c=y)
+
+    # x values for the line
+    x1_values = np.linspace(X[:, 0].min(), X[:, 0].max(), 100)
+
+    # normalize
+    x1_norm = (x1_values - mu[0]) / sigma[0]
+
+    # decision boundary
+    x2_norm = -(weights[0] * x1_norm + bias) / weights[1]
+
+    # back to original scale
+    x2_values = x2_norm * sigma[1] + mu[1]
+
+    # plot line
+    plt.plot(x1_values, x2_values)
+
+    # labels
+    plt.xlabel("Feature 1")
+    plt.ylabel("Feature 2")
+    plt.title("Decision Boundary")
+
+    plt.show()
 
 # sigmoid function
 def sigmoid(z):
     return 1 / (1 + np.exp(-z))
+
+df["return_1"] = df["Price"].pct_change()
+
 
 
 # dataset
@@ -74,29 +104,3 @@ print("\nFinal values:")
 print("weights:", weights, "bias:", bias)
 
 
-# scatter plot of the original data
-plt.scatter(X[:, 0], X[:, 1], c=y)
-
-# x values for the line
-x1_values = np.linspace(X[:, 0].min(), X[:, 0].max(), 100)
-
-# convert x1 to normalized scale
-x1_norm = (x1_values - mu[0]) / sigma[0]
-
-# decision boundary in normalized space:
-# weights[0] * x1_norm + weights[1] * x2_norm + bias = 0
-x2_norm = -(weights[0] * x1_norm + bias) / weights[1]
-
-# convert x2 back to original scale
-x2_values = x2_norm * sigma[1] + mu[1]
-
-# plot the line
-plt.plot(x1_values, x2_values)
-
-# labels
-plt.xlabel("Feature 1")
-plt.ylabel("Feature 2")
-plt.title("Decision Boundary")
-
-# show graph
-plt.show()
